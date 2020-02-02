@@ -1,0 +1,147 @@
+Sub ticker()
+
+    'Used Cereal Loop and Wells Fargo Exercise for Help
+    For Each ws In Worksheets
+        
+        Dim tickername As String
+            'Will show text as a string
+        
+        Dim tickervol As Double
+        tickervol = 0
+        'Need to use double to show decimals
+        'Credit card checker helped
+        
+        Dim sumtickrow As Integer
+        sumtickrow = 2
+            'Rows are integers
+            'CreditCard Checker helped
+        
+        Dim OP As Double
+            'Opening Price
+            OP = ws.Cells(2, 3).Value
+            'Make sure to put ws. on all Cells!
+            
+        Dim CP As Double
+            'Closing Price
+        Dim yearly_change As Double
+        Dim percent_change As Double
+            'All these need decimials so make them Doubles and not Integers
+
+       'Need Headings for column in the first row
+        ws.Cells(1, 9).Value = "Ticker"
+        ws.Cells(1, 10).Value = "Yearly Change"
+        ws.Cells(1, 11).Value = "Percent Change"
+        ws.Cells(1, 12).Value = "Total Stock Volume"
+
+
+        'Used credit card checker and wells fargo to help to help
+        lastrow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+            'need to use <> and xl up
+
+       'Time to loop it up!
+       'Used credit card checker to help
+        For i = 2 To lastrow
+
+            
+            If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+                'Credit card checker
+        
+              
+              tickername = ws.Cells(i, 1).Value
+              tickervol = tickervol + ws.Cells(i, 7).Value
+
+              
+              ws.Range("I" & sumtickrow).Value = tickername
+              ws.Range("L" & sumtickrow).Value = tickervol
+                'CreditCard Checker
+              
+              CP = ws.Cells(i, 6).Value
+             'utilize some subtraction
+               yearly_change = (CP - OP)
+               
+              ws.Range("J" & sumtickrow).Value = yearly_change
+                'Need an inception loop, a loop inside a loop!
+                If OP = 0 Then
+                    percent_change = 0
+                Else
+                    percent_change = yearly_change / OP
+                End If
+
+              
+              ws.Range("K" & sumtickrow).Value = percent_change
+              'Format as percentage
+              ws.Range("K" & sumtickrow).NumberFormat = "0.00%"
+   
+              
+              sumtickrow = sumtickrow + 1
+              tickervol = 0
+                'Credit Card Checker
+                    'Needed to add one to the summary ticker row
+                    'Needed to reset ticker volume
+              
+              OP = ws.Cells(i + 1, 3)
+            
+            Else
+              
+              tickervol = tickervol + ws.Cells(i, 7).Value
+            
+            End If
+            
+        Next i
+            'MsgBox "All this works!"
+
+    lastrow_summary_table = ws.Cells(Rows.Count, 9).End(xlUp).Row
+    
+        'Used Formating exercise and grader to help
+        For i = 2 To lastrow_summary_table
+            
+            If ws.Cells(i, 10).Value > 0 Then
+                ws.Cells(i, 10).Interior.ColorIndex = 4
+            
+            Else
+                ws.Cells(i, 10).Interior.ColorIndex = 3
+            
+            End If
+        
+            'MsgBox "This works!"
+        Next i
+
+        ws.Cells(2, 15).Value = "Greatest % Increase"
+        ws.Cells(3, 15).Value = "Greatest % Decrease"
+        ws.Cells(4, 15).Value = "Greatest Total Volume"
+        ws.Cells(1, 16).Value = "Ticker"
+        ws.Cells(1, 17).Value = "Value"
+
+  
+        For i = 2 To lastrow_summary_table
+        
+            'Need Max Percentage change
+            If ws.Cells(i, 11).Value = Application.WorksheetFunction.Max(ws.Range("K2:K" & lastrow_summary_table)) Then
+                ws.Cells(2, 16).Value = ws.Cells(i, 9).Value
+                ws.Cells(2, 17).Value = ws.Cells(i, 11).Value
+                ws.Cells(2, 17).NumberFormat = "0.00%"
+
+            'Min Percentage change
+            ElseIf ws.Cells(i, 11).Value = Application.WorksheetFunction.Min(ws.Range("K2:K" & lastrow_summary_table)) Then
+                ws.Cells(3, 16).Value = ws.Cells(i, 9).Value
+                ws.Cells(3, 17).Value = ws.Cells(i, 11).Value
+                ws.Cells(3, 17).NumberFormat = "0.00%"
+            
+            'Max Value of trade
+            ElseIf ws.Cells(i, 12).Value = Application.WorksheetFunction.Max(ws.Range("L2:L" & lastrow_summary_table)) Then
+                ws.Cells(4, 16).Value = ws.Cells(i, 9).Value
+                ws.Cells(4, 17).Value = ws.Cells(i, 12).Value
+            
+            End If
+        
+        Next i
+    
+        MsgBox "This Worksheet Works!"
+    
+    Next ws
+        
+        MsgBox "Wu Tang Financial says you need to diversify your bonds..."
+        MsgBox "And Protect Ya Neck!"
+        
+End Sub
+
